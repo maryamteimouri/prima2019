@@ -1,5 +1,6 @@
 package multisize;
 
+import jdk.internal.util.xml.impl.Pair;
 import main.Game;
 import main.PrimaMain;
 import main.State;
@@ -68,6 +69,7 @@ public class MULTISIZE_State extends State {
             return "{" + first + ", " + second + "}";
         }
     }
+    List<PII> cells = new ArrayList<>();
 
     @Override
     public void reset() {
@@ -75,7 +77,7 @@ public class MULTISIZE_State extends State {
         lastColor = -1;
     }
 
-    public MULTISIZE_State(MULTISIZE_State st, PRIMA_Action act) {
+    public MULTISIZE_State(MULTISIZE_State st, MULTISIZE_Action act) {
         width = st.width;
         height = st.height;
         playerNumber = st.playerNumber;
@@ -103,6 +105,8 @@ public class MULTISIZE_State extends State {
         lastColor = st.nextColor;
         localLastColor = st.localNextColor;
         myNumber = st.myNumber;
+
+        cells.addAll(st.cells);
 
         setNextColor();
         if (nextColor <= lastColor)
