@@ -4,8 +4,6 @@ import main.Game;
 import main.PrimaMain;
 import main.State;
 import main.Value;
-import prima.PRIMA_State;
-import prima.PRIMA_Value;
 
 public class MULTISIZE_Game extends Game{
 

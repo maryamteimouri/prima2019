@@ -15,21 +15,6 @@ public class MULTISIZE_Value extends Value {
         bestValue = value;
         this.mark = m;
     }
-
-    public int compareTo(MULTISIZE_Value vv) {
-        if (value < vv.value)
-            return -1;
-        else
-            return 1;
-    }
-
-    public int compareToBest(MULTISIZE_Value vv) {
-        if (bestValue < vv.bestValue)
-            return -1;
-        else
-            return 1;
-    }
-
     @Override
     public MULTISIZE_Value update(State state, Value simulationResult) {
         MULTISIZE_State st = (MULTISIZE_State) state;
@@ -69,7 +54,7 @@ public class MULTISIZE_Value extends Value {
 
     @Override
     public String toString() {
-        return "PRIMA_Value [num=" + num + ", value=" + value + ", bestValue=" + bestValue + "]";
+        return "MULTISIZE_Value [num=" + num + ", value=" + value + ", bestValue=" + bestValue + "]";
     }
 
     @Override

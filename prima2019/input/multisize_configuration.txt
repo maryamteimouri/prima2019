@@ -4,6 +4,6 @@ false
 false
 true
 true true true true true true 
-PRIMA
+MULTISIZE
 MP52-1.txt
 false

@@ -1,7 +1,6 @@
 package multisize;
 
 import main.*;
-import prima.PRIMA_State;
 
 import java.util.ArrayList;
 

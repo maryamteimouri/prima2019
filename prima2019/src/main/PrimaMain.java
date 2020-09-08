@@ -8,6 +8,7 @@ import java.util.Scanner;
 
 import cog.*;
 import multisize.MULTISIZE_Game;
+import multisize.MULTISIZE_MCTS;
 import multisize.MULTISIZE_Simulator;
 import prima.*;
 import xo.*;
@@ -68,7 +69,7 @@ public class PrimaMain {
                 case "MULTISIZE":
                     game = new MULTISIZE_Game();
                     simulator = new MULTISIZE_Simulator();
-                    mcts = new MonteCarloTreeSearch(game, simulator);
+                    mcts = new MULTISIZE_MCTS(game, simulator);
                     for (int i = 1; i <= 6; ++i) {
                         Value.modelNumber = i;
                         if (checkModels[i])

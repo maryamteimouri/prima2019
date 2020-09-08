@@ -1,11 +1,9 @@
 package multisize;
 
-import jdk.internal.util.xml.impl.Pair;
 import main.Game;
 import main.PrimaMain;
 import main.State;
 import main.Value;
-import prima.PRIMA_Action;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -119,9 +117,9 @@ public class MULTISIZE_State extends State {
     public MULTISIZE_State(String str, int mynum) {
         File file;
         if (PrimaMain.unix)
-            file = new File("input/testcase/prima/" + str);
+            file = new File("input/testcase/multisize/" + str);
         else
-            file = new File("input\\testcase\\prima\\" + str);
+            file = new File("input\\testcase\\multisize\\" + str);
         try {
             Scanner sc;
             if (PrimaMain.systemInput)
@@ -199,6 +197,9 @@ public class MULTISIZE_State extends State {
         parent = st;
         lastColor = st.nextColor;
         localLastColor = st.localNextColor;
+
+        cells.addAll(st.cells);
+
         setNextColor();
         if (nextColor <= lastColor)
             depth = st.depth + 1;
@@ -231,6 +232,8 @@ public class MULTISIZE_State extends State {
 
         depth = st.depth;
         realDepth = st.realDepth;
+
+        cells.addAll(st.cells);
     }
 
     private void setNextColor() {
@@ -254,11 +257,6 @@ public class MULTISIZE_State extends State {
             else
                 break;
         }
-    }
-
-    private int dis(int color) {
-        return Math.abs(lastMove[color].first - target[color].first)
-                + Math.abs(lastMove[color].second - target[color].second);
     }
 
     private boolean isNear(int color) {
@@ -309,7 +307,7 @@ public class MULTISIZE_State extends State {
         ArrayList<State> childss = new ArrayList<State>();
         if (table[lastMove[nextColor].first][lastMove[nextColor].second] < 0)
             childss.add(MULTISIZE_Simulator.simulateX(this,
-                    new PRIMA_Action(lastMove[nextColor].second, lastMove[nextColor].first, nextColor, true)));
+                    new MULTISIZE_Action(lastMove[nextColor].second, lastMove[nextColor].first, nextColor, true)));
         else
             for (int i = -1; i < 2; ++i)
                 for (int j = (i == 0 ? -1 : 0); j < (i == 0 ? 2 : 1); ++j)
@@ -317,7 +315,7 @@ public class MULTISIZE_State extends State {
                             && lastMove[nextColor].second + j >= 0 && lastMove[nextColor].second + j < height
                             && (table[lastMove[nextColor].first + i][lastMove[nextColor].second + j] == 0
                             || table[lastMove[nextColor].first + i][lastMove[nextColor].second + j] == -1))
-                        childss.add(MULTISIZE_Simulator.simulateX(this, new PRIMA_Action(lastMove[nextColor].second + j,
+                        childss.add(MULTISIZE_Simulator.simulateX(this, new MULTISIZE_Action(lastMove[nextColor].second + j,
                                 lastMove[nextColor].first + i, nextColor)));
         return childss;
     }
@@ -358,9 +356,9 @@ public class MULTISIZE_State extends State {
         Random random = new Random();
         int v = random.nextInt(childNumber());
         int ans = 0;
-        PRIMA_Action nextAct = null;
+        MULTISIZE_Action nextAct = null;
         if (table[lastMove[nextColor].first][lastMove[nextColor].second] < 0)
-            nextAct = new PRIMA_Action(lastMove[nextColor].second, lastMove[nextColor].first, nextColor, true);
+            nextAct = new MULTISIZE_Action(lastMove[nextColor].second, lastMove[nextColor].first, nextColor, true);
         else
             for (int i = -1; i < 2; ++i)
                 for (int j = (i == 0 ? -1 : 0); j < (i == 0 ? 2 : 1); ++j) {
@@ -370,7 +368,7 @@ public class MULTISIZE_State extends State {
                             || table[lastMove[nextColor].first + i][lastMove[nextColor].second + j] == -1)) {
                         ++ans;
                         if (ans == v + 1) {
-                            nextAct = new PRIMA_Action(lastMove[nextColor].second + j, lastMove[nextColor].first + i,
+                            nextAct = new MULTISIZE_Action(lastMove[nextColor].second + j, lastMove[nextColor].first + i,
                                     nextColor);
                             break;
                         }
@@ -380,7 +378,7 @@ public class MULTISIZE_State extends State {
             updateDown(nextAct);
     }
 
-    private void updateDown(PRIMA_Action act) {
+    private void updateDown(MULTISIZE_Action act) {
         // TODO lolo was here =)))
         if (table[act.y][act.x] == -1 || table[act.y][act.x] == 0) {
             table[lastMove[act.color].first][lastMove[act.color].second] = 0;
