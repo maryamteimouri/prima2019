@@ -10,6 +10,7 @@ import cog.*;
 import multisize.MULTISIZE_Game;
 import multisize.MULTISIZE_MCTS;
 import multisize.MULTISIZE_Simulator;
+import multisize.MULTISIZE_State;
 import prima.*;
 import xo.*;
 
@@ -146,7 +147,7 @@ public class PrimaMain {
                 + " Ratio: " + game.getState().getValueX() + " Depth: " + game.getState().getDepth());
         long maxx = Long.MIN_VALUE;
         double avg = 0;
-        for (int i = 1; i < ((PRIMA_State) game.getState()).playerNumber; ++i) {
+        for (int i = 1; i < ((MULTISIZE_State) game.getState()).playerNumber; ++i) {
             maxx = Math.max(maxx, timer[i]);
             avg = (avg * (i - 1) + timer[i]) / i;
         }

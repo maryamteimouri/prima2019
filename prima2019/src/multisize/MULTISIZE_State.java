@@ -114,7 +114,13 @@ public class MULTISIZE_State extends State {
         localLastColor = st.localNextColor;
         myNumber = st.myNumber;
 
+        set(playerNumber + 1, MAX_SIZE);
         cells.addAll(st.cells);
+        for (int i = 0; i < st.cells.size(); ++i){
+            for (int j = 0; j < st.cells.get(i).size(); ++j){
+
+            }
+        }
 
         setNextColor();
         if (nextColor <= lastColor)
@@ -212,6 +218,7 @@ public class MULTISIZE_State extends State {
         lastColor = st.nextColor;
         localLastColor = st.localNextColor;
 
+        set(playerNumber + 1, MAX_SIZE);
         cells.addAll(st.cells);
 
         setNextColor();
@@ -247,6 +254,7 @@ public class MULTISIZE_State extends State {
         depth = st.depth;
         realDepth = st.realDepth;
 
+        set(playerNumber + 1, MAX_SIZE);
         cells.addAll(st.cells);
     }
 
