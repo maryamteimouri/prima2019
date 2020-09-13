@@ -36,6 +36,7 @@ public class MULTISIZE_State extends State {
         return res;
     }
 
+    public static final int MAX_SIZE = 8;
     public int table[][];
     public int height;
     public int width;
@@ -67,7 +68,16 @@ public class MULTISIZE_State extends State {
             return "{" + first + ", " + second + "}";
         }
     }
-    List<PII> cells = new ArrayList<>();
+
+    List<List<PII>> cells;
+
+    public void set(int m, int n) {
+        cells = new ArrayList<>(m); // assuming m is the number or rows
+        for (int i = 0; i < m; ++i) {
+            cells.add(new ArrayList<>(n));
+        }
+        // now you have a List of m lists where each inner list has n items
+    }
 
     @Override
     public void reset() {
@@ -130,6 +140,7 @@ public class MULTISIZE_State extends State {
             height = sc.nextInt();
             playerNumber = sc.nextInt();
             goalNumber = sc.nextInt();
+            set(playerNumber + 1, MAX_SIZE);
             table = new int[width][height];
             lastMove = new PII[playerNumber + 1];
             target = new PII[playerNumber + 1];
@@ -141,8 +152,11 @@ public class MULTISIZE_State extends State {
                 for (int j = 0; j < height; ++j) {
                     table[i][j] = sc.nextInt();
                     if (table[i][j] != 0 && table[i][j] != -1)
-                        if (lastMove[table[i][j]] == null)
+                        if (lastMove[table[i][j]] == null) {
                             lastMove[table[i][j]] = new PII(i, j);
+                        } else {
+                            cells.get(table[i][j]).add(new PII(i - lastMove[table[i][j]].first, j - lastMove[table[i][j]].second));
+                        }
                 }
             lastColor = playerNumber;
             localLastColor = playerNumber - 1;
