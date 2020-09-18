@@ -136,7 +136,8 @@ public class PrimaMain {
             long startTime = System.currentTimeMillis();
 
             State nextState = treeSolver.getBestNextState(state);// O(pI^2 + pIT + pIn^2)
-
+            System.out.println("last color : " + ((MULTISIZE_State)game.getState()).lastColor );
+            System.out.println(((MULTISIZE_State)game.getState()).toString());
             if (PrimaMain.debugMode)
                 System.out.println(System.currentTimeMillis() - startTime);
 
