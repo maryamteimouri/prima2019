@@ -104,17 +104,19 @@ public class MULTISIZE_State extends State {
         if (table[act.y][act.x] >= -1) {
             table[lastMove[act.color].first][lastMove[act.color].second] = 0;
             for (int i = 0; i < st.cells.get(act.color).size(); ++i) {
-                table[lastMove[act.color].first + st.cells.get(act.color).get(i).second][lastMove[act.color].second + st.cells.get(act.color).get(i).first] = 0;
+                table[lastMove[act.color].first + st.cells.get(act.color).get(i).first][lastMove[act.color].second + st.cells.get(act.color).get(i).second] = 0;
             }
             if (table[act.y][act.x] == -1) {
                 table[act.y][act.x] = -act.color - 1;
+//                System.out.println("celss size2 " + st.cells.get(act.color).size());
                 for (int i = 0; i < st.cells.get(act.color).size(); ++i) {
-                    table[lastMove[act.color].first + st.cells.get(act.color).get(i).second][lastMove[act.color].second + st.cells.get(act.color).get(i).first] = -act.color - 1;
+//                    System.out.println("color " +  act.color + " first " + st.cells.get(act.color).get(i).first + " second " + st.cells.get(act.color).get(i).second);
+                    table[act.y + st.cells.get(act.color).get(i).first][act.x + st.cells.get(act.color).get(i).second] = -act.color - 1;
                 }
             } else {
                 table[act.y][act.x] = act.color;
                 for (int i = 0; i < st.cells.get(act.color).size(); ++i) {
-                    table[lastMove[act.color].first + st.cells.get(act.color).get(i).second][lastMove[act.color].second + st.cells.get(act.color).get(i).first] = act.color;
+                    table[act.y + st.cells.get(act.color).get(i).first][act.x + st.cells.get(act.color).get(i).second] = act.color;
                 }
             }
         }
@@ -125,12 +127,8 @@ public class MULTISIZE_State extends State {
         myNumber = st.myNumber;
 
         set(playerNumber + 1, MAX_SIZE);
+        cells.clear();
         cells.addAll(st.cells);
-        for (int i = 0; i < st.cells.size(); ++i) {
-            for (int j = 0; j < st.cells.get(i).size(); ++j) {
-
-            }
-        }
 
         setNextColor();
         if (nextColor <= lastColor)
@@ -207,7 +205,7 @@ public class MULTISIZE_State extends State {
                 table[i][j] = st.table[i][j];
         for (int i = 1; i <= playerNumber; ++i) {
             if (gg[i] == null)
-                continue;
+                continue; //problem
             try { // u should change the constructor here
                 int help = table[((MULTISIZE_State) gg[i]).lastMove[i].first][((MULTISIZE_State) gg[i]).lastMove[i].second];
 
@@ -238,6 +236,7 @@ public class MULTISIZE_State extends State {
         localLastColor = st.localNextColor;
 
         set(playerNumber + 1, MAX_SIZE);
+        cells.clear();
         cells.addAll(st.cells);
 
         setNextColor();
@@ -274,6 +273,7 @@ public class MULTISIZE_State extends State {
         realDepth = st.realDepth;
 
         set(playerNumber + 1, MAX_SIZE);
+        cells.clear();
         cells.addAll(st.cells);
     }
 
@@ -432,10 +432,22 @@ public class MULTISIZE_State extends State {
         // TODO lolo was here =)))
         if (table[act.y][act.x] == -1 || table[act.y][act.x] == 0) {
             table[lastMove[act.color].first][lastMove[act.color].second] = 0;
-            if (table[act.y][act.x] == -1)
+            for (int j = 0; j < cells.get(act.color).size(); ++j) {
+                table[lastMove[act.color].first + cells.get(act.color).get(j).first][lastMove[act.color].second + cells.get(act.color).get(j).second] = 0;
+            }
+            if (table[act.y][act.x] == -1){
                 table[act.y][act.x] = -act.color - 1;
-            else
+                System.out.println("cells size" + cells.get(act.color).size());
+                for (int j = 0; j < cells.get(act.color).size(); ++j) {
+                    table[act.y + cells.get(act.color).get(j).first][act.x + cells.get(act.color).get(j).second] = -act.color - 1;
+                }
+            }
+            else{
                 table[act.y][act.x] = act.color;
+                for (int j = 0; j < cells.get(act.color).size(); ++j) {
+                    table[act.y + cells.get(act.color).get(j).first][act.x + cells.get(act.color).get(j).second] = act.color;
+                }
+            }
         }
         lastMove[act.color] = new PII(act.y, act.x);
         lastColor = nextColor;
