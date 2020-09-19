@@ -142,7 +142,7 @@ public class PrimaMain {
 
             game.updateState(nextState);
         }
-        //System.out.println("FinalState: \n" + game.getState());
+        System.out.println(((MULTISIZE_State)game.getState()).toString());
         System.out.println("ModelNUmber: " + Value.modelNumber + " Time: " + (System.currentTimeMillis() - startTimes)
                 + " Ratio: " + game.getState().getValueX() + " Depth: " + game.getState().getDepth());
         long maxx = Long.MIN_VALUE;

@@ -106,11 +106,9 @@ public class MULTISIZE_State extends State {
             for (int i = 0; i < st.cells.get(act.color).size(); ++i) {
                 table[lastMove[act.color].first + st.cells.get(act.color).get(i).first][lastMove[act.color].second + st.cells.get(act.color).get(i).second] = 0;
             }
-            if (table[act.y][act.x] == -1) {
+            if (table[act.y][act.x] == -1 || isAChildTerminal(st, act.color,act.y,act.x)){
                 table[act.y][act.x] = -act.color - 1;
-//                System.out.println("celss size2 " + st.cells.get(act.color).size());
                 for (int i = 0; i < st.cells.get(act.color).size(); ++i) {
-//                    System.out.println("color " +  act.color + " first " + st.cells.get(act.color).get(i).first + " second " + st.cells.get(act.color).get(i).second);
                     table[act.y + st.cells.get(act.color).get(i).first][act.x + st.cells.get(act.color).get(i).second] = -act.color - 1;
                 }
             } else {
@@ -214,11 +212,12 @@ public class MULTISIZE_State extends State {
                     for (int j = 0; j < st.cells.get(i).size(); ++j) {
                         table[lastMove[i].first + st.cells.get(i).get(j).first][lastMove[i].second + st.cells.get(i).get(j).second] = 0;
                     }
-                    table[((MULTISIZE_State) gg[i]).lastMove[i].first][((MULTISIZE_State) gg[i]).lastMove[i].second] = help == -1
+                    boolean is_a_child_terminal = (help == -1) || isAChildTerminal(st, i, ((MULTISIZE_State) gg[i]).lastMove[i].first, ((MULTISIZE_State) gg[i]).lastMove[i].second);
+                    table[((MULTISIZE_State) gg[i]).lastMove[i].first][((MULTISIZE_State) gg[i]).lastMove[i].second] =  is_a_child_terminal
                             ? -i - 1
                             : i;
                     for (int j = 0; j < st.cells.get(i).size(); ++j) {
-                        table[((MULTISIZE_State) gg[i]).lastMove[i].first + st.cells.get(i).get(j).first][((MULTISIZE_State) gg[i]).lastMove[i].second + st.cells.get(i).get(j).second] = help == -1
+                        table[((MULTISIZE_State) gg[i]).lastMove[i].first + st.cells.get(i).get(j).first][((MULTISIZE_State) gg[i]).lastMove[i].second + st.cells.get(i).get(j).second] =  is_a_child_terminal
                                 ? -i - 1
                                 : i;
                     }
@@ -356,7 +355,7 @@ public class MULTISIZE_State extends State {
                             && lastMove[nextColor].second + j >= 0 && lastMove[nextColor].second + j < height
                             && (table[lastMove[nextColor].first + i][lastMove[nextColor].second + j] == 0
                             || table[lastMove[nextColor].first + i][lastMove[nextColor].second + j] == -1)
-                            && areChildsSafe(nextColor,lastMove[nextColor].first + i,lastMove[nextColor].second + j)
+                            && areChildsSafe(null, nextColor, lastMove[nextColor].first + i, lastMove[nextColor].second + j)
                     )
                         childss.add(MULTISIZE_Simulator.simulateX(this, new MULTISIZE_Action(lastMove[nextColor].second + j,
                                 lastMove[nextColor].first + i, nextColor)));
@@ -372,7 +371,7 @@ public class MULTISIZE_State extends State {
                         && lastMove[nextColor].second + j >= 0 && lastMove[nextColor].second + j < height
                         && (table[lastMove[nextColor].first + i][lastMove[nextColor].second + j] == 0
                         || table[lastMove[nextColor].first + i][lastMove[nextColor].second + j] == -1)
-                        && areChildsSafe(nextColor, lastMove[nextColor].first + i, lastMove[nextColor].second + j)
+                        && areChildsSafe(null, nextColor, lastMove[nextColor].first + i, lastMove[nextColor].second + j)
                 )
                     return true;
             }
@@ -389,7 +388,7 @@ public class MULTISIZE_State extends State {
                         && lastMove[nextColor].second + j >= 0 && lastMove[nextColor].second + j < height
                         && (table[lastMove[nextColor].first + i][lastMove[nextColor].second + j] == 0
                         || table[lastMove[nextColor].first + i][lastMove[nextColor].second + j] == -1)
-                        && areChildsSafe(nextColor,lastMove[nextColor].first + i,lastMove[nextColor].second + j)
+                        && areChildsSafe(null, nextColor, lastMove[nextColor].first + i, lastMove[nextColor].second + j)
                 )
                     ++ans;
         return ans;
@@ -414,7 +413,7 @@ public class MULTISIZE_State extends State {
                             && lastMove[nextColor].second + j >= 0 && lastMove[nextColor].second + j < height
                             && (table[lastMove[nextColor].first + i][lastMove[nextColor].second + j] == 0
                             || table[lastMove[nextColor].first + i][lastMove[nextColor].second + j] == -1)
-                            && areChildsSafe(nextColor,lastMove[nextColor].first + i,lastMove[nextColor].second + j)
+                            && areChildsSafe(null, nextColor, lastMove[nextColor].first + i, lastMove[nextColor].second + j)
                     ) {
                         ++ans;
                         if (ans == v + 1) {
@@ -435,14 +434,12 @@ public class MULTISIZE_State extends State {
             for (int j = 0; j < cells.get(act.color).size(); ++j) {
                 table[lastMove[act.color].first + cells.get(act.color).get(j).first][lastMove[act.color].second + cells.get(act.color).get(j).second] = 0;
             }
-            if (table[act.y][act.x] == -1){
+            if (table[act.y][act.x] == -1 || isAChildTerminal(null, act.color, act.y, act.x)) {
                 table[act.y][act.x] = -act.color - 1;
-                System.out.println("cells size" + cells.get(act.color).size());
                 for (int j = 0; j < cells.get(act.color).size(); ++j) {
                     table[act.y + cells.get(act.color).get(j).first][act.x + cells.get(act.color).get(j).second] = -act.color - 1;
                 }
-            }
-            else{
+            } else {
                 table[act.y][act.x] = act.color;
                 for (int j = 0; j < cells.get(act.color).size(); ++j) {
                     table[act.y + cells.get(act.color).get(j).first][act.x + cells.get(act.color).get(j).second] = act.color;
@@ -483,20 +480,60 @@ public class MULTISIZE_State extends State {
         return new MULTISIZE_Value(-1, res / playerNumber);
     }
 
-    private boolean areChildsSafe(int color, int x, int y) {
+    private boolean areChildsSafe(MULTISIZE_State st, int color, int y, int x) {
 
-        boolean safe=true;
-        for (int i = 0; i < cells.get(color).size(); ++i){
-             if(     (x + cells.get(color).get(i).first < 0 || x + cells.get(color).get(i).first >= width)
-                     || (y + cells.get(color).get(i).second < 0 || y + cells.get(color).get(i).second >= height)
-                     || (table[x+cells.get(color).get(i).first][y+cells.get(color).get(i).second] != 0
-                     && table[x+cells.get(color).get(i).first][y+cells.get(color).get(i).second] != -1
-                     && table[x+cells.get(color).get(i).first][y+cells.get(color).get(i).second] != color)
-                     ){
-                 safe = false;
-                 break;
-             }
+        boolean safe = true;
+        if(st == null){
+            for (int i = 0; i < cells.get(color).size(); ++i) {
+                if ((y + cells.get(color).get(i).first < 0 || y + cells.get(color).get(i).first >= width)
+                        || (x + cells.get(color).get(i).second < 0 || x + cells.get(color).get(i).second >= height)
+                        || (table[y + cells.get(color).get(i).first][x + cells.get(color).get(i).second] != 0
+                        && table[y + cells.get(color).get(i).first][x + cells.get(color).get(i).second] != -1
+                        && table[y + cells.get(color).get(i).first][x + cells.get(color).get(i).second] != color)
+                ) {
+                    safe = false;
+                    break;
+                }
+            }
+        }else {
+            for (int i = 0; i < st.cells.get(color).size(); ++i) {
+                if ((y + st.cells.get(color).get(i).first < 0 || y + st.cells.get(color).get(i).first >= width)
+                        || (x + st.cells.get(color).get(i).second < 0 || x + st.cells.get(color).get(i).second >= height)
+                        || (table[y + st.cells.get(color).get(i).first][x + st.cells.get(color).get(i).second] != 0
+                        && table[y + st.cells.get(color).get(i).first][x + st.cells.get(color).get(i).second] != -1
+                        && table[y + st.cells.get(color).get(i).first][x + st.cells.get(color).get(i).second] != color)
+                ) {
+                    safe = false;
+                    break;
+                }
+            }
         }
+
         return safe;
+    }
+
+    private boolean isAChildTerminal(MULTISIZE_State st, int color, int y, int x) {
+        boolean terminal = false;
+
+        if(!areChildsSafe(st,color,y,x)){
+            return false;
+        }
+
+        if (st == null) {
+            for (int i = 0; i < cells.get(color).size(); ++i) {
+                if (table[y + cells.get(color).get(i).first][x + cells.get(color).get(i).second] == -1) {
+                    terminal = true;
+                    break;
+                }
+            }
+        }else {
+            for (int i = 0; i < st.cells.get(color).size(); ++i) {
+                if (table[y + st.cells.get(color).get(i).first][x + st.cells.get(color).get(i).second] == -1) {
+                    terminal = true;
+                    break;
+                }
+            }
+        }
+        return terminal;
     }
 }
