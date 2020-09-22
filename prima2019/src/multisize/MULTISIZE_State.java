@@ -111,8 +111,17 @@ public class MULTISIZE_State extends State {
     public void fillAssignments() {
         HungarianAlgorithm ha = new HungarianAlgorithm(cost_table);
         assignment = ha.findOptimalAssignment();
+//        hungarian check
+//        String s = "{";
+//        for (int i = 0; i < assignment.length; ++i) {
+//            for (int j = 0; j < assignment[i].length; ++j) {
+//                s += targets.get(assignment[i][j]) + ", ";
+//            }
+//            s += "\n";
+//        }
+//        s += "}";
+//        System.out.println(s);
     }
-
 
     @Override
     public void reset() {
@@ -173,12 +182,9 @@ public class MULTISIZE_State extends State {
             System.arraycopy(st.cost_table[i], 0, cost_table[i], 0, st.cost_table[0].length);
         }
 
-//        for (int i = 0; i < st.assignment.length; ++i) {
-//            System.arraycopy(st.assignment[i], 0, assignment[i], 0, st.assignment[0].length);
-//        }
         assignment = new int[playerNumber][2];
-        for (int i = 0; i < st.assignment.length; ++i){
-            for (int j = 0; j < st.assignment[i].length; ++j){
+        for (int i = 0; i < st.assignment.length; ++i) {
+            for (int j = 0; j < st.assignment[i].length; ++j) {
                 assignment[i][j] = st.assignment[i][j];
             }
         }
@@ -314,12 +320,9 @@ public class MULTISIZE_State extends State {
             System.arraycopy(st.cost_table[i], 0, cost_table[i], 0, st.cost_table[0].length);
         }
 
-//        for (int i = 0; i < st.assignment.length; ++i) {
-//            System.arraycopy(st.assignment[i], 0, assignment[i], 0, st.assignment[0].length);
-//        }
         assignment = new int[playerNumber][2];
-        for (int i = 0; i < st.assignment.length; ++i){
-            for (int j = 0; j < st.assignment[i].length; ++j){
+        for (int i = 0; i < st.assignment.length; ++i) {
+            for (int j = 0; j < st.assignment[i].length; ++j) {
                 assignment[i][j] = st.assignment[i][j];
             }
         }

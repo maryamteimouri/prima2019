@@ -15,6 +15,7 @@ public class MULTISIZE_Value extends Value {
         bestValue = value;
         this.mark = m;
     }
+
     @Override
     public MULTISIZE_Value update(State state, Value simulationResult) {
         MULTISIZE_State st = (MULTISIZE_State) state;
@@ -49,7 +50,7 @@ public class MULTISIZE_Value extends Value {
             default:
                 break;
         }
-//        value = (value + getMatchingValue(state))/2;
+        value = (value + getMatchingValue(state)) / 2;
         return this;
     }
 
@@ -68,14 +69,14 @@ public class MULTISIZE_Value extends Value {
             return 1;
     }
 
-    public double getMatchingValue(State state){
+    public double getMatchingValue(State state) {
         int counter = 0;
         MULTISIZE_State st = (MULTISIZE_State) state;
-        for (int i = 0; i < st.assignment.length; ++i){
-            if(st.table[st.assignment[i][0]][st.assignment[i][1] ]== -(i+1)-1){
+        for (int i = 0; i < st.assignment.length; ++i) {
+            if (st.table[st.assignment[i][0]][st.assignment[i][1]] == -(i + 1) - 1) {
                 counter++;
             }
         }
-        return (double) (counter/st.playerNumber);
+        return (double) (counter / st.playerNumber);
     }
 }
