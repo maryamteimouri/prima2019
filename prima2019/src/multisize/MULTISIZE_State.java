@@ -70,14 +70,49 @@ public class MULTISIZE_State extends State {
     }
 
     List<List<PII>> cells;
+    int[][] cost_table;
+    List<PII> targets;
+    int[][] assignment = new int[playerNumber][3];
 
-    public void set(int m, int n) {
-        cells = new ArrayList<>(m); // assuming m is the number or rows
+    public void setCells(int m, int n) {
+        cells = new ArrayList<>(m);
         for (int i = 0; i < m; ++i) {
             cells.add(new ArrayList<>(n));
         }
-        // now you have a List of m lists where each inner list has n items
     }
+
+    public void setTargets(int n) {
+        targets = new ArrayList<>(n);
+    }
+
+    public void setCost_table(int m, int n) {
+        cost_table = new int[m][n];
+    }
+
+    public void fillTargets() {
+        for (int i = 0; i < width; ++i) {
+            for (int j = 0; j < height; ++j) {
+                if (table[i][j] == -1) {
+                    targets.add(new PII(i, j));
+                }
+            }
+        }
+    }
+
+    public void fillCost_table() {
+        for (int i = 1; i <= playerNumber; ++i) {
+            for (int j = 0; j < playerNumber; ++j) {
+                int cost = (int) ((int) Math.pow((lastMove[i].first - targets.get(j).first), 2) + Math.pow((lastMove[i].second - targets.get(j).second), 2));
+                cost_table[i - 1][j] = cost;
+            }
+        }
+    }
+
+    public void fillAssignments() {
+        HungarianAlgorithm ha = new HungarianAlgorithm(cost_table);
+        assignment = ha.findOptimalAssignment();
+    }
+
 
     @Override
     public void reset() {
@@ -106,7 +141,7 @@ public class MULTISIZE_State extends State {
             for (int i = 0; i < st.cells.get(act.color).size(); ++i) {
                 table[lastMove[act.color].first + st.cells.get(act.color).get(i).first][lastMove[act.color].second + st.cells.get(act.color).get(i).second] = 0;
             }
-            if (table[act.y][act.x] == -1 || isAChildTerminal(st, act.color,act.y,act.x)){
+            if (table[act.y][act.x] == -1 || isChildTerminal(st, act.color, act.y, act.x)) {
                 table[act.y][act.x] = -act.color - 1;
                 for (int i = 0; i < st.cells.get(act.color).size(); ++i) {
                     table[act.y + st.cells.get(act.color).get(i).first][act.x + st.cells.get(act.color).get(i).second] = -act.color - 1;
@@ -124,9 +159,29 @@ public class MULTISIZE_State extends State {
         localLastColor = st.localNextColor;
         myNumber = st.myNumber;
 
-        set(playerNumber + 1, MAX_SIZE);
+        setCells(playerNumber + 1, MAX_SIZE);
         cells.clear();
         cells.addAll(st.cells);
+
+        setTargets(playerNumber);
+        targets.clear();
+        targets.addAll(st.targets);
+
+        setCost_table(playerNumber, playerNumber);
+
+        for (int i = 0; i < st.cost_table.length; ++i) {
+            System.arraycopy(st.cost_table[i], 0, cost_table[i], 0, st.cost_table[0].length);
+        }
+
+//        for (int i = 0; i < st.assignment.length; ++i) {
+//            System.arraycopy(st.assignment[i], 0, assignment[i], 0, st.assignment[0].length);
+//        }
+        assignment = new int[playerNumber][2];
+        for (int i = 0; i < st.assignment.length; ++i){
+            for (int j = 0; j < st.assignment[i].length; ++j){
+                assignment[i][j] = st.assignment[i][j];
+            }
+        }
 
         setNextColor();
         if (nextColor <= lastColor)
@@ -152,7 +207,7 @@ public class MULTISIZE_State extends State {
             height = sc.nextInt();
             playerNumber = sc.nextInt();
             goalNumber = sc.nextInt();
-            set(playerNumber + 1, MAX_SIZE);
+            setCells(playerNumber + 1, MAX_SIZE);
             table = new int[width][height];
             lastMove = new PII[playerNumber + 1];
             target = new PII[playerNumber + 1];
@@ -177,6 +232,17 @@ public class MULTISIZE_State extends State {
             localLastColor = -1;
             lastColor = -1;
             sc.close();
+
+            setTargets(playerNumber);
+            targets.clear();
+            fillTargets();
+
+            setCost_table(playerNumber, playerNumber);
+//            cost_table.clear();
+            fillCost_table();
+
+            fillAssignments();
+
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -212,12 +278,12 @@ public class MULTISIZE_State extends State {
                     for (int j = 0; j < st.cells.get(i).size(); ++j) {
                         table[lastMove[i].first + st.cells.get(i).get(j).first][lastMove[i].second + st.cells.get(i).get(j).second] = 0;
                     }
-                    boolean is_a_child_terminal = (help == -1) || isAChildTerminal(st, i, ((MULTISIZE_State) gg[i]).lastMove[i].first, ((MULTISIZE_State) gg[i]).lastMove[i].second);
-                    table[((MULTISIZE_State) gg[i]).lastMove[i].first][((MULTISIZE_State) gg[i]).lastMove[i].second] =  is_a_child_terminal
+                    boolean is_a_child_terminal = (help == -1) || isChildTerminal(st, i, ((MULTISIZE_State) gg[i]).lastMove[i].first, ((MULTISIZE_State) gg[i]).lastMove[i].second);
+                    table[((MULTISIZE_State) gg[i]).lastMove[i].first][((MULTISIZE_State) gg[i]).lastMove[i].second] = is_a_child_terminal
                             ? -i - 1
                             : i;
                     for (int j = 0; j < st.cells.get(i).size(); ++j) {
-                        table[((MULTISIZE_State) gg[i]).lastMove[i].first + st.cells.get(i).get(j).first][((MULTISIZE_State) gg[i]).lastMove[i].second + st.cells.get(i).get(j).second] =  is_a_child_terminal
+                        table[((MULTISIZE_State) gg[i]).lastMove[i].first + st.cells.get(i).get(j).first][((MULTISIZE_State) gg[i]).lastMove[i].second + st.cells.get(i).get(j).second] = is_a_child_terminal
                                 ? -i - 1
                                 : i;
                     }
@@ -234,9 +300,29 @@ public class MULTISIZE_State extends State {
         lastColor = st.nextColor;
         localLastColor = st.localNextColor;
 
-        set(playerNumber + 1, MAX_SIZE);
+        setCells(playerNumber + 1, MAX_SIZE);
         cells.clear();
         cells.addAll(st.cells);
+
+        setTargets(playerNumber);
+        targets.clear();
+        targets.addAll(st.targets);
+
+        setCost_table(playerNumber, playerNumber);
+
+        for (int i = 0; i < st.cost_table.length; ++i) {
+            System.arraycopy(st.cost_table[i], 0, cost_table[i], 0, st.cost_table[0].length);
+        }
+
+//        for (int i = 0; i < st.assignment.length; ++i) {
+//            System.arraycopy(st.assignment[i], 0, assignment[i], 0, st.assignment[0].length);
+//        }
+        assignment = new int[playerNumber][2];
+        for (int i = 0; i < st.assignment.length; ++i){
+            for (int j = 0; j < st.assignment[i].length; ++j){
+                assignment[i][j] = st.assignment[i][j];
+            }
+        }
 
         setNextColor();
         if (nextColor <= lastColor)
@@ -271,9 +357,24 @@ public class MULTISIZE_State extends State {
         depth = st.depth;
         realDepth = st.realDepth;
 
-        set(playerNumber + 1, MAX_SIZE);
+        setCells(playerNumber + 1, MAX_SIZE);
         cells.clear();
         cells.addAll(st.cells);
+
+        setTargets(playerNumber);
+        targets.clear();
+        targets.addAll(st.targets);
+
+        setCost_table(playerNumber, playerNumber);
+
+        for (int i = 0; i < st.cost_table.length; ++i) {
+            System.arraycopy(st.cost_table[i], 0, cost_table[i], 0, st.cost_table[0].length);
+        }
+
+        for (int i = 0; i < st.assignment.length; ++i) {
+            System.arraycopy(st.assignment[i], 0, assignment[i], 0, st.assignment[0].length);
+        }
+
     }
 
     private void setNextColor() {
@@ -355,7 +456,7 @@ public class MULTISIZE_State extends State {
                             && lastMove[nextColor].second + j >= 0 && lastMove[nextColor].second + j < height
                             && (table[lastMove[nextColor].first + i][lastMove[nextColor].second + j] == 0
                             || table[lastMove[nextColor].first + i][lastMove[nextColor].second + j] == -1)
-                            && areChildsSafe(null, nextColor, lastMove[nextColor].first + i, lastMove[nextColor].second + j)
+                            && areChildrenSafe(null, nextColor, lastMove[nextColor].first + i, lastMove[nextColor].second + j)
                     )
                         childss.add(MULTISIZE_Simulator.simulateX(this, new MULTISIZE_Action(lastMove[nextColor].second + j,
                                 lastMove[nextColor].first + i, nextColor)));
@@ -371,7 +472,7 @@ public class MULTISIZE_State extends State {
                         && lastMove[nextColor].second + j >= 0 && lastMove[nextColor].second + j < height
                         && (table[lastMove[nextColor].first + i][lastMove[nextColor].second + j] == 0
                         || table[lastMove[nextColor].first + i][lastMove[nextColor].second + j] == -1)
-                        && areChildsSafe(null, nextColor, lastMove[nextColor].first + i, lastMove[nextColor].second + j)
+                        && areChildrenSafe(null, nextColor, lastMove[nextColor].first + i, lastMove[nextColor].second + j)
                 )
                     return true;
             }
@@ -388,7 +489,7 @@ public class MULTISIZE_State extends State {
                         && lastMove[nextColor].second + j >= 0 && lastMove[nextColor].second + j < height
                         && (table[lastMove[nextColor].first + i][lastMove[nextColor].second + j] == 0
                         || table[lastMove[nextColor].first + i][lastMove[nextColor].second + j] == -1)
-                        && areChildsSafe(null, nextColor, lastMove[nextColor].first + i, lastMove[nextColor].second + j)
+                        && areChildrenSafe(null, nextColor, lastMove[nextColor].first + i, lastMove[nextColor].second + j)
                 )
                     ++ans;
         return ans;
@@ -413,7 +514,7 @@ public class MULTISIZE_State extends State {
                             && lastMove[nextColor].second + j >= 0 && lastMove[nextColor].second + j < height
                             && (table[lastMove[nextColor].first + i][lastMove[nextColor].second + j] == 0
                             || table[lastMove[nextColor].first + i][lastMove[nextColor].second + j] == -1)
-                            && areChildsSafe(null, nextColor, lastMove[nextColor].first + i, lastMove[nextColor].second + j)
+                            && areChildrenSafe(null, nextColor, lastMove[nextColor].first + i, lastMove[nextColor].second + j)
                     ) {
                         ++ans;
                         if (ans == v + 1) {
@@ -434,7 +535,7 @@ public class MULTISIZE_State extends State {
             for (int j = 0; j < cells.get(act.color).size(); ++j) {
                 table[lastMove[act.color].first + cells.get(act.color).get(j).first][lastMove[act.color].second + cells.get(act.color).get(j).second] = 0;
             }
-            if (table[act.y][act.x] == -1 || isAChildTerminal(null, act.color, act.y, act.x)) {
+            if (table[act.y][act.x] == -1 || isChildTerminal(null, act.color, act.y, act.x)) {
                 table[act.y][act.x] = -act.color - 1;
                 for (int j = 0; j < cells.get(act.color).size(); ++j) {
                     table[act.y + cells.get(act.color).get(j).first][act.x + cells.get(act.color).get(j).second] = -act.color - 1;
@@ -480,10 +581,10 @@ public class MULTISIZE_State extends State {
         return new MULTISIZE_Value(-1, res / playerNumber);
     }
 
-    private boolean areChildsSafe(MULTISIZE_State st, int color, int y, int x) {
+    private boolean areChildrenSafe(MULTISIZE_State st, int color, int y, int x) {
 
         boolean safe = true;
-        if(st == null){
+        if (st == null) {
             for (int i = 0; i < cells.get(color).size(); ++i) {
                 if ((y + cells.get(color).get(i).first < 0 || y + cells.get(color).get(i).first >= width)
                         || (x + cells.get(color).get(i).second < 0 || x + cells.get(color).get(i).second >= height)
@@ -495,7 +596,7 @@ public class MULTISIZE_State extends State {
                     break;
                 }
             }
-        }else {
+        } else {
             for (int i = 0; i < st.cells.get(color).size(); ++i) {
                 if ((y + st.cells.get(color).get(i).first < 0 || y + st.cells.get(color).get(i).first >= width)
                         || (x + st.cells.get(color).get(i).second < 0 || x + st.cells.get(color).get(i).second >= height)
@@ -512,10 +613,10 @@ public class MULTISIZE_State extends State {
         return safe;
     }
 
-    private boolean isAChildTerminal(MULTISIZE_State st, int color, int y, int x) {
+    private boolean isChildTerminal(MULTISIZE_State st, int color, int y, int x) {
         boolean terminal = false;
 
-        if(!areChildsSafe(st,color,y,x)){
+        if (!areChildrenSafe(st, color, y, x)) {
             return false;
         }
 
@@ -526,7 +627,7 @@ public class MULTISIZE_State extends State {
                     break;
                 }
             }
-        }else {
+        } else {
             for (int i = 0; i < st.cells.get(color).size(); ++i) {
                 if (table[y + st.cells.get(color).get(i).first][x + st.cells.get(color).get(i).second] == -1) {
                     terminal = true;
