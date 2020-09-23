@@ -1,7 +1,7 @@
 package main;
 
 public abstract class Value {
-	public static int modelNumber = 1;
+	public static int modelNumber = 4;
 
 	public int num;
 	public double value;

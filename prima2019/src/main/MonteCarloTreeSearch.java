@@ -40,7 +40,7 @@ public class MonteCarloTreeSearch extends TreeSolver {
 
 	public State getBestNextStateSingle(State root) {// O(I^2 + IT + In^2)
 		root.reset(game);
-		int time = 2000;
+		int time = 4000;
 		while (time-- > 0) {
 			if (PrimaMain.garbageCollectorMode)
 				System.gc();
