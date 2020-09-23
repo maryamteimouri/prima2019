@@ -70,13 +70,15 @@ public class MULTISIZE_Value extends Value {
     }
 
     public double getMatchingValue(State state) {
-        int counter = 0;
+        double counter = 0;
         MULTISIZE_State st = (MULTISIZE_State) state;
         for (int i = 0; i < st.assignment.length; ++i) {
-            if (st.table[st.assignment[i][0]][st.assignment[i][1]] == -(i + 1) - 1) {
+            if (st.table[st.targets.get(st.assignment[i][1]).first][st.targets.get(st.assignment[i][1]).second] == -(i + 1) - 1) {
+//                System.out.println("here");
                 counter++;
             }
         }
+//        System.out.println((double) (counter / st.playerNumber));
         return (double) (counter / st.playerNumber);
     }
 }
