@@ -1,15 +1,22 @@
 package multisize;
 
 import main.*;
-
 import java.util.ArrayList;
 
-public class MULTISIZE_MCTS extends MonteCarloTreeSearch {
+public class MULTISIZE_MCTS extends TreeSolver {
     public MULTISIZE_MCTS(Game game, Simulator simulator) {
         super(game, simulator);
     }
 
     @Override
+    public State getBestNextState(State root) {
+        if (game.isCentralized())
+            return getBestNextStateSingle(root);
+        else
+            return getBestNextStateMulti(root);
+
+    }
+
     public State getBestNextStateMulti(State root) {
         MULTISIZE_State st = (MULTISIZE_State) root;
         State[] gg = new State[st.playerNumber + 1];
@@ -26,6 +33,22 @@ public class MULTISIZE_MCTS extends MonteCarloTreeSearch {
         }
         ga.agentState = ng;
         return ng[1];
+    }
+
+    public State getBestNextStateSingle(State root) {// O(I^2 + IT + In^2)
+        root.reset(game);
+        int time = 4000;
+        while (time-- > 0) {
+            if (PrimaMain.garbageCollectorMode)
+                System.gc();
+            State leaf = selection(root);// O(I)
+            State expandedLeaf = expansion(leaf);// O(n^2)
+            Value simulationResult = rollout(expandedLeaf);// O(T+n^2)
+            backpropagation(simulationResult, expandedLeaf);// O(I)
+        }
+        if (time == 0)
+            System.out.println("time 0 shod");
+        return bestChild(root);
     }
 
     private State selection(State state) {// Done
@@ -109,5 +132,4 @@ public class MULTISIZE_MCTS extends MonteCarloTreeSearch {
         }
         return ans;
     }
-
 }

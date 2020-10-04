@@ -9,6 +9,10 @@ public abstract class Game {
 	protected boolean Centralized;
 	protected State myState;
 
+	public boolean isCentralized() {
+		return Centralized;
+	}
+
 	public abstract void init();
 
 	public abstract Value CreateZeroValue();
