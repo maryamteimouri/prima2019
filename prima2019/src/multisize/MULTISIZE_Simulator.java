@@ -11,7 +11,7 @@ public class MULTISIZE_Simulator extends Simulator {
         MULTISIZE_Action act = (MULTISIZE_Action) action;
         MULTISIZE_State st = (MULTISIZE_State) state;
         MULTISIZE_State res = null;
-        if (st.table[act.y][act.x] == 0)
+        if (st.table[act.y][act.x] == 0 || st.table[act.y][act.x] == act.color)
             res = new MULTISIZE_State(st, act);
         return res;
     }
@@ -20,7 +20,7 @@ public class MULTISIZE_Simulator extends Simulator {
         MULTISIZE_Action act = (MULTISIZE_Action) action;
         MULTISIZE_State st = (MULTISIZE_State) state;
         MULTISIZE_State res = null;
-        if (st.table[act.y][act.x] == 0 || st.table[act.y][act.x] == -1 || act.stay)
+        if (st.table[act.y][act.x] == 0 || st.table[act.y][act.x] == -1 || act.stay || st.table[act.y][act.x] == act.color)
             res = new MULTISIZE_State(st, act);
         return res;
     }

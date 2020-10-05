@@ -207,7 +207,7 @@ public class MULTISIZE_State extends State {
             try { // u should change the constructor here
                 int help = table[((MULTISIZE_State) gg[i]).lastMove[i].first][((MULTISIZE_State) gg[i]).lastMove[i].second];
 
-                if (((MULTISIZE_State) gg[i]).lastMove[i] != lastMove[i] && (help == 0 || help == -1)) {
+                if (((MULTISIZE_State) gg[i]).lastMove[i] != lastMove[i] && (help == 0 || help == -1 || help == i)) {
                     table[lastMove[i].first][lastMove[i].second] = 0;
                     for (int j = 0; j < st.cells.get(i).size(); ++j) {
                         table[lastMove[i].first + st.cells.get(i).get(j).first][lastMove[i].second + st.cells.get(i).get(j).second] = 0;
@@ -354,7 +354,7 @@ public class MULTISIZE_State extends State {
                     if (lastMove[nextColor].first + i >= 0 && lastMove[nextColor].first + i < width
                             && lastMove[nextColor].second + j >= 0 && lastMove[nextColor].second + j < height
                             && (table[lastMove[nextColor].first + i][lastMove[nextColor].second + j] == 0
-                            || table[lastMove[nextColor].first + i][lastMove[nextColor].second + j] == -1)
+                            || table[lastMove[nextColor].first + i][lastMove[nextColor].second + j] == -1 || table[lastMove[nextColor].first + i][lastMove[nextColor].second + j] == nextColor)
                             && areChildsSafe(null, nextColor, lastMove[nextColor].first + i, lastMove[nextColor].second + j)
                     )
                         childss.add(MULTISIZE_Simulator.simulateX(this, new MULTISIZE_Action(lastMove[nextColor].second + j,
@@ -370,7 +370,7 @@ public class MULTISIZE_State extends State {
                 if (lastMove[nextColor].first + i >= 0 && lastMove[nextColor].first + i < width
                         && lastMove[nextColor].second + j >= 0 && lastMove[nextColor].second + j < height
                         && (table[lastMove[nextColor].first + i][lastMove[nextColor].second + j] == 0
-                        || table[lastMove[nextColor].first + i][lastMove[nextColor].second + j] == -1)
+                        || table[lastMove[nextColor].first + i][lastMove[nextColor].second + j] == -1 || table[lastMove[nextColor].first + i][lastMove[nextColor].second + j] == nextColor)
                         && areChildsSafe(null, nextColor, lastMove[nextColor].first + i, lastMove[nextColor].second + j)
                 )
                     return true;
@@ -387,7 +387,7 @@ public class MULTISIZE_State extends State {
                 if (lastMove[nextColor].first + i >= 0 && lastMove[nextColor].first + i < width
                         && lastMove[nextColor].second + j >= 0 && lastMove[nextColor].second + j < height
                         && (table[lastMove[nextColor].first + i][lastMove[nextColor].second + j] == 0
-                        || table[lastMove[nextColor].first + i][lastMove[nextColor].second + j] == -1)
+                        || table[lastMove[nextColor].first + i][lastMove[nextColor].second + j] == -1 || table[lastMove[nextColor].first + i][lastMove[nextColor].second + j] == nextColor)
                         && areChildsSafe(null, nextColor, lastMove[nextColor].first + i, lastMove[nextColor].second + j)
                 )
                     ++ans;
@@ -412,7 +412,7 @@ public class MULTISIZE_State extends State {
                     if (lastMove[nextColor].first + i >= 0 && lastMove[nextColor].first + i < width
                             && lastMove[nextColor].second + j >= 0 && lastMove[nextColor].second + j < height
                             && (table[lastMove[nextColor].first + i][lastMove[nextColor].second + j] == 0
-                            || table[lastMove[nextColor].first + i][lastMove[nextColor].second + j] == -1)
+                            || table[lastMove[nextColor].first + i][lastMove[nextColor].second + j] == -1 || table[lastMove[nextColor].first + i][lastMove[nextColor].second + j] == nextColor)
                             && areChildsSafe(null, nextColor, lastMove[nextColor].first + i, lastMove[nextColor].second + j)
                     ) {
                         ++ans;
@@ -423,13 +423,13 @@ public class MULTISIZE_State extends State {
                         }
                     }
                 }
-        if (nextAct != null && (table[nextAct.y][nextAct.x] == 0 || table[nextAct.y][nextAct.x] == -1 || nextAct.stay))
+        if (nextAct != null && (table[nextAct.y][nextAct.x] == 0 || table[nextAct.y][nextAct.x] == -1 || table[nextAct.y][nextAct.x] == nextAct.color || nextAct.stay))
             updateDown(nextAct);
     }
 
     private void updateDown(MULTISIZE_Action act) {
         // TODO lolo was here =)))
-        if (table[act.y][act.x] == -1 || table[act.y][act.x] == 0) {
+        if (table[act.y][act.x] == -1 || table[act.y][act.x] == 0 || table[act.y][act.x] == act.color ) {
             table[lastMove[act.color].first][lastMove[act.color].second] = 0;
             for (int j = 0; j < cells.get(act.color).size(); ++j) {
                 table[lastMove[act.color].first + cells.get(act.color).get(j).first][lastMove[act.color].second + cells.get(act.color).get(j).second] = 0;
