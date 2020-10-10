@@ -54,7 +54,7 @@ public class MULTISIZE_State extends State {
 
     public int realDepth = 0;
 
-    class PII {
+    static class PII {
         public PII(int i, int j) {
             first = i;
             second = j;

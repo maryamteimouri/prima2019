@@ -3,6 +3,9 @@ package multisize;
 import main.State;
 import main.Value;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MULTISIZE_Value extends Value {
 
     public MULTISIZE_Value(int num, double value) {
@@ -15,6 +18,7 @@ public class MULTISIZE_Value extends Value {
         bestValue = value;
         this.mark = m;
     }
+
     @Override
     public MULTISIZE_Value update(State state, Value simulationResult) {
         MULTISIZE_State st = (MULTISIZE_State) state;
@@ -26,9 +30,9 @@ public class MULTISIZE_Value extends Value {
                         - (st.lastColor != -1
                         ? simulation_result.mark[st.lastColor]
                         ? (double) (1.5 - (double) (((modelNumber - 1) % 3) + 1) / 2)
-                        * (1 / (double)st.playerNumber)
+                        * (1 / (double) st.playerNumber)
                         : (double) (1.5 - (double) (((modelNumber - 1) % 3) + 1) / 2)
-                        * (1 / ( getNearestTargetDist(st)))//st.playerNumber *
+                        * -(1 / (getNearestTargetDist(st)))//st.playerNumber *
                         : 0));
         switch (modelNumber) {
             case 1:
@@ -68,18 +72,59 @@ public class MULTISIZE_Value extends Value {
             return 1;
     }
 
-    private double getNearestTargetDist(MULTISIZE_State st){
-        double min_dist = Math.pow(st.height,2) + Math.pow(st.width,2);
-        double dist;
-        for (int i = 0; i < st.width; ++i)
+    private double getNearestTargetDist(MULTISIZE_State st) {
+
+        int[][] cost_table;
+        List<MULTISIZE_State.PII> targets;
+        int[][] assignment = new int[st.playerNumber][2];
+
+        targets = new ArrayList<>(st.playerNumber);
+
+        cost_table = new int[st.playerNumber][st.playerNumber];
+
+
+        for (int i = 0; i < st.width; ++i) {
             for (int j = 0; j < st.height; ++j) {
-                if (st.table[i][j] == -1){
-                    dist = Math.sqrt(Math.abs(st.lastMove[st.lastColor].first - i) + Math.abs(st.lastMove[st.lastColor].second - j));
-                    if (dist < min_dist){
-                        min_dist = dist;
-                    }
+                if (st.table[i][j] == -1) {
+                    targets.add(new MULTISIZE_State.PII(i, j));
                 }
             }
+        }
+
+        int cost;
+        for (int i = 1; i <= st.playerNumber; ++i) {
+            for (int j = 0; j < targets.size(); ++j) {
+                cost = 1000;
+                if (st.table[st.lastMove[i].first][st.lastMove[i].second] > 0)
+                    cost = (int) ((int) Math.pow((st.lastMove[i].first - targets.get(j).first), 2) + Math.pow((st.lastMove[i].second - targets.get(j).second), 2));
+                cost_table[i - 1][j] = cost;
+            }
+        }
+
+
+        HungarianAlgorithm ha = new HungarianAlgorithm(cost_table);
+        assignment = ha.findOptimalAssignment();
+//        hungarian check
+//        String s = "{";
+//        for (int i = 0; i < assignment.length; ++i) {
+//                if (assignment[i][1] >= 0 && assignment[i][1] < targets.size())
+//                    s += targets.get(assignment[i][1]) + ", ";
+//            s += "\n";
+//        }
+//        s += "}";
+//        System.out.println(s);
+
+
+        double min_dist = Math.pow(st.height, 2) + Math.pow(st.width, 2);
+        double dist;
+        if (assignment[st.lastColor - 1][1] >= 0 && assignment[st.lastColor - 1][1] < targets.size()
+                && targets.get(assignment[st.lastColor - 1][1]) != null && st.lastMove[st.lastColor - 1] != null) {
+            min_dist = Math.sqrt(Math.pow(targets.get(assignment[st.lastColor - 1][1]).first - st.lastMove[st.lastColor - 1].first, 2)
+                    + Math.pow(targets.get(assignment[st.lastColor - 1][1]).second - st.lastMove[st.lastColor - 1].second, 2));
+        }
+
         return min_dist;
     }
+
+
 }
