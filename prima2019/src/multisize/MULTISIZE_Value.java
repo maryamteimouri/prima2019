@@ -32,7 +32,7 @@ public class MULTISIZE_Value extends Value {
                         ? (double) (1.5 - (double) (((modelNumber - 1) % 3) + 1) / 2)
                         * (1 / (double) st.playerNumber)
                         : (double) (1.5 - (double) (((modelNumber - 1) % 3) + 1) / 2)
-                        * -(1 / (getNearestTargetDist(st)))//st.playerNumber *
+                        * -(1 / ( getNearestTargetDist(st)))//st.playerNumber *
                         : 0));
         switch (modelNumber) {
             case 1:
@@ -115,15 +115,16 @@ public class MULTISIZE_Value extends Value {
 //        System.out.println(s);
 
 
-        double min_dist = Math.pow(st.height, 2) + Math.pow(st.width, 2);
-        double dist;
-        if (assignment[st.lastColor - 1][1] >= 0 && assignment[st.lastColor - 1][1] < targets.size()
-                && targets.get(assignment[st.lastColor - 1][1]) != null && st.lastMove[st.lastColor - 1] != null) {
-            min_dist = Math.sqrt(Math.pow(targets.get(assignment[st.lastColor - 1][1]).first - st.lastMove[st.lastColor - 1].first, 2)
-                    + Math.pow(targets.get(assignment[st.lastColor - 1][1]).second - st.lastMove[st.lastColor - 1].second, 2));
+        double dist = Math.sqrt(Math.pow(st.height, 2) + Math.pow(st.width, 2));
+        double max_dist = Math.sqrt(Math.pow(st.height, 2) + Math.pow(st.width, 2));
+        if (assignment[st.lastColor - 1][1] >= 0 && assignment[st.lastColor - 1][1] < targets.size()) {
+            dist = (Math.pow(targets.get(assignment[st.lastColor - 1][1]).first - st.lastMove[st.lastColor ].first, 2)
+                    + Math.pow(targets.get(assignment[st.lastColor - 1][1]).second - st.lastMove[st.lastColor ].second, 2));
+//            System.out.println(st.lastColor + ", " + targets.get(assignment[st.lastColor - 1][1]).first + ", "
+//                    + targets.get(assignment[st.lastColor - 1][1]).second + ", " + dist);
         }
 
-        return min_dist;
+        return dist;
     }
 
 
