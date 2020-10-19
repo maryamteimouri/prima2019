@@ -26,9 +26,8 @@ public class MULTISIZE_Value extends Value {
                         - (st.lastColor != -1
                         ? simulation_result.mark[st.lastColor]
                         ? (double) (1.5 - (double) (((modelNumber - 1) % 3) + 1) / 2)
-                        * (1 / (double)st.playerNumber)
-                        : (double) (1.5 - (double) (((modelNumber - 1) % 3) + 1) / 2)
-                        * (1 / ( getNearestTargetDist(st)))//st.playerNumber *
+                        * (1 / st.playerNumber)
+                        : 0
                         : 0));
         switch (modelNumber) {
             case 1:
@@ -66,20 +65,5 @@ public class MULTISIZE_Value extends Value {
             return -1;
         else
             return 1;
-    }
-
-    private double getNearestTargetDist(MULTISIZE_State st){
-        double min_dist = Math.pow(st.height,2) + Math.pow(st.width,2);
-        double dist;
-        for (int i = 0; i < st.width; ++i)
-            for (int j = 0; j < st.height; ++j) {
-                if (st.table[i][j] == -1){
-                    dist = Math.sqrt(Math.abs(st.lastMove[st.lastColor].first - i) + Math.abs(st.lastMove[st.lastColor].second - j));
-                    if (dist < min_dist){
-                        min_dist = dist;
-                    }
-                }
-            }
-        return min_dist;
     }
 }
